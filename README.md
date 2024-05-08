@@ -1,3 +1,5 @@
+yolox base commit id:  49f5c1214fa40b41aa0af6ccee71353b215e763e
+
 <div align="center"><img src="assets/logo.png" width="350"></div>
 <img src="assets/demo.png" >
 
