@@ -165,6 +165,28 @@ class CSPLayer(nn.Module):
         """
         # ch_in, ch_out, number, shortcut, groups, expansion
         super().__init__()
+        
+        self.avg_pool = nn.AdaptiveAvgPool2d(1)
+        self.max_pool = nn.AdaptiveMaxPool2d(1)
+           
+        in_planes = in_channels
+        self.fc = nn.Sequential(nn.Conv2d(in_planes, in_planes // 16, 1, bias=False),
+                               nn.ReLU(),
+                               nn.Conv2d(in_planes // 16, in_planes, 1, bias=False))
+        
+        self.fc2 = nn.Sequential(nn.Conv2d(in_planes, in_planes // 16, 1, bias=False),
+                               nn.ReLU(),
+                               nn.Conv2d(in_planes // 16, in_planes, 1, bias=False))
+
+
+
+        
+        self.sigmoid = nn.Sigmoid()
+        kernel_size = 7
+        self.convsa = nn.Conv2d(2, 1, kernel_size, padding=kernel_size//2, bias=False)
+
+
+
         hidden_channels = int(out_channels * expansion)  # hidden channels
         self.conv1 = BaseConv(in_channels, hidden_channels, 1, stride=1, act=act)
         self.conv2 = BaseConv(in_channels, hidden_channels, 1, stride=1, act=act)
@@ -178,6 +200,22 @@ class CSPLayer(nn.Module):
         self.m = nn.Sequential(*module_list)
 
     def forward(self, x):
+
+        avg_out = self.fc(self.avg_pool(x))
+        max_out = self.fc2(self.max_pool(x))
+        out = avg_out + max_out
+        out = self.sigmoid(out)
+        
+        x = out * x
+       
+        avg_out2 = torch.mean(x, dim=1, keepdim=True)
+        max_out2, _ = torch.max(x, dim=1, keepdim=True)
+        out2 = torch.cat([avg_out2, max_out2], dim=1)
+        out2 = self.convsa(out2)
+        out2 self.sigmoid(x)
+        
+        x = out2 * x
+
         x_1 = self.conv1(x)
         x_2 = self.conv2(x)
         x_1 = self.m(x_1)
