@@ -4,7 +4,7 @@
 
 import megengine.module as M
 
-from .network_blocks import BaseConv, CSPLayer, DWConv, Focus, ResLayer, SPPBottleneck
+from .network_blocks import BaseConv, CECSPLayer, DWConv, Focus, ResLayer, SPPBottleneck
 
 
 class Darknet(M.Module):
@@ -105,7 +105,7 @@ class CSPDarknet(M.Module):
         # dark2
         self.dark2 = M.Sequential(
             Conv(base_channels, base_channels * 2, 3, 2, act=act),
-            CSPLayer(
+            CECSPLayer(
                 base_channels * 2, base_channels * 2,
                 n=base_depth, depthwise=depthwise, act=act
             ),
@@ -114,7 +114,7 @@ class CSPDarknet(M.Module):
         # dark3
         self.dark3 = M.Sequential(
             Conv(base_channels * 2, base_channels * 4, 3, 2, act=act),
-            CSPLayer(
+            CECSPLayer(
                 base_channels * 4, base_channels * 4,
                 n=base_depth * 3, depthwise=depthwise, act=act,
             ),
@@ -123,7 +123,7 @@ class CSPDarknet(M.Module):
         # dark4
         self.dark4 = M.Sequential(
             Conv(base_channels * 4, base_channels * 8, 3, 2, act=act),
-            CSPLayer(
+            CECSPLayer(
                 base_channels * 8, base_channels * 8,
                 n=base_depth * 3, depthwise=depthwise, act=act,
             ),
@@ -133,7 +133,7 @@ class CSPDarknet(M.Module):
         self.dark5 = M.Sequential(
             Conv(base_channels * 8, base_channels * 16, 3, 2, act=act),
             SPPBottleneck(base_channels * 16, base_channels * 16, activation=act),
-            CSPLayer(
+            CECSPLayer(
                 base_channels * 16, base_channels * 16, n=base_depth,
                 shortcut=False, depthwise=depthwise, act=act,
             ),

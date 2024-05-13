@@ -144,7 +144,7 @@ class SPPBottleneck(nn.Module):
         return x
 
 
-class CSPLayer(nn.Module):
+class CECSPLayer(nn.Module):
     """C3 in yolov5, CSP Bottleneck with 3 convolutions"""
 
     def __init__(
