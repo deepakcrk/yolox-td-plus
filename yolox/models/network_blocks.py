@@ -212,7 +212,7 @@ class CECSPLayer(nn.Module):
         max_out2, _ = torch.max(x, dim=1, keepdim=True)
         out2 = torch.cat([avg_out2, max_out2], dim=1)
         out2 = self.convsa(out2)
-        out2 self.sigmoid(x)
+        out2 = self.sigmoid(x)
         
         x = out2 * x
 
